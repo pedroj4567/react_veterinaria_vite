@@ -10,7 +10,7 @@ return (
     <div className='container mx-auto mt-20'>
         <Header/>
         
-        <div className='mt-20  md:flex'>
+        <div className='mt-8 md:flex '>
             <Formulario/>
             <ListadoPacientes/>
         </div>
