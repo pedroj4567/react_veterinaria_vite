@@ -1,17 +1,91 @@
-import {useState} from 'react'
-
-const Formulario = () => {
+/* eslint-disable react/prop-types */
+import {useState, useEffect} from 'react'
+import Error from './Error';
+const Formulario = ({pacientes,setPacientes,paciente,setPaciente}) => {
   // States 
   const [nombre,setNombre] = useState("");
   const [propietario,setPropietario] = useState("");
   const [email,setEmail] = useState("");
   const [ingreso,setIngreso] = useState("");
   const [sintomas,setSintomas] = useState("");
-  // functions 
-  const handlerSubmit = (e) =>{
-    e.preventDefault();
-    console.log(e);
+  const [error,setError] = useState(false);
+  const getId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+  //objeto paciente
+  const objectPaciente = {
+    nombre,  
+    propietario,
+    email,
+    ingreso,
+    sintomas,
+   
   }
+
+  //este useEffect esta atento a la dependencia
+  //de paciente.
+  useEffect(()=>{
+    if(Object.keys(paciente).length > 0){
+
+      const {nombre,propietario,sintomas,email,ingreso} = paciente;
+
+      setNombre(nombre);
+      setPropietario(propietario);
+      setEmail(email);
+      setIngreso(ingreso);
+      setSintomas(sintomas);
+    }
+
+  },[paciente])
+
+  // //cuando el array de dependencias esta vacios
+  // //este useEffect se encarga de ver cuando el componente esta cargado o montado en la vista
+  // useEffect(()=>{
+  //   console.log("Componente cargado");
+  // },[])
+
+  // functions 
+  const handlerSubmit = (e) =>{ 
+    e.preventDefault();
+
+    //validacion del formulario 
+    if([nombre,propietario,email,ingreso,sintomas].includes("")){
+        setError(true);
+        return;
+    }
+      setError(false);
+      
+     if(paciente.id){
+        //primero asignamos el id correspondiente 
+        //del elemento a editar
+        objectPaciente.id = paciente.id;
+        //busca el paciente segun su id
+        //luego agrega el nuevo objecto actualizado en caso de que lo consiga
+        //sino deja el mismo paciente
+        const pacientesActualizados = pacientes.map( pacienteState => pacienteState.id === paciente.id ? objectPaciente : pacienteState);
+        setPacientes(pacientesActualizados);
+        //resetamos el state del paciente seleccionado
+        setPaciente({});
+
+     }else{
+       //ingresamos el paciente
+       objectPaciente.id = getId();
+       setPacientes([...pacientes,objectPaciente]);
+     }
+
+      //reiniciar el formulario
+      resetForm();
+  }
+
+  const resetForm = ()=>{
+      setNombre("");
+      setEmail("");
+      setPropietario("");
+      setIngreso("");
+      setSintomas("");
+  }
+
+  
+  
 
   return (
     <div className="md:w-1/2 lg:w-2/5">
@@ -24,6 +98,8 @@ const Formulario = () => {
        <form 
         onSubmit={handlerSubmit}
         className="bg-white shadow-lg mt-5  py-10 rounded-lg px-5 mb-10">
+
+          {error && <Error><p>Todos los campos son obligatorios</p></Error>}
 
           <div className="mb-5">
               <label 
@@ -122,8 +198,9 @@ const Formulario = () => {
             <button 
               type="submit"
               className="text-white font-bold w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition-all"
+              value={paciente.id ? "Editar paciente" : "Agregar paciente"}
             >
-                Agregar
+                {paciente.id ? "Editar paciente" : "Agregar paciente"}
             </button>
           </div>
        </form>
