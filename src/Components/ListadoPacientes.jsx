@@ -37,7 +37,7 @@ const ListadoPacientes = ({setPaciente,pacientes,eliminarPaciente}) => {
         <>
           <h2 className="font-black text-3xl text-center">No hay pacientes</h2>
               <p className="text-xl mt-10 mb-5 text-center">
-                 Comienza agregando pacientes{' '}
+                 Comienza agregando pacientes{' '} con git
               <span className="text-indigo-600 font-bold">ellos aparecerán aqui</span>
             </p>  
         </>
